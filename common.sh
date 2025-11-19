@@ -11,6 +11,7 @@ SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILE="$LOG_FOLDER/$SCRIPT_NAME.log"
 SCRIPT_DIR=$PWD
 MONGODB_HOST=mongodb.theawsdevops.space
+MYSQL_HOST=mysql.theawsdevops.space
 START_TIME=$(date +%s)
 
 mkdir -p $LOG_FOLDER
@@ -51,6 +52,15 @@ nodejs_setup(){
     VALIDATE $? "Installing NodeJS"
     npm install &>>$LOG_FILE
     VALIDATE $? "Installing dependencies"
+}
+
+java_setup(){
+    dnf install maven -y &>>$LOG_FILE
+    VALIDATE $? "Installing maven"
+    mvn clean package &>> $LOG_FILE
+    VALIDATE $? "Building Maven package"
+    mv target/shipping-1.0.jar shipping.jar &>> $LOG_FILE
+    VALIDATE $? "Moving shipping file" 
 }
 
 app_setup(){
